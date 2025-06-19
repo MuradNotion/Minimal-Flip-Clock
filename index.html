@@ -38,20 +38,7 @@
       position: relative;
       transition: background-color 0.3s, border-color 0.3s;
       transform-origin: center center;
-    }
-
-    .dot-toggle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 10px;
-      height: 10px;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      background: #333;
-      border: 1px solid #aaa;
-      cursor: pointer;
-      z-index: 10;
+      cursor: pointer; /* Makes entire clock clickable */
     }
 
     .time-box {
@@ -104,11 +91,6 @@
       color: #fff;
     }
 
-    body.dark .dot-toggle {
-      background: #888;
-      border-color: #444;
-    }
-
     body.dark .time-box {
       background-color: rgba(255, 255, 255, 0.1);
     }
@@ -116,8 +98,7 @@
 </head>
 <body>
   <div class="clock-wrapper">
-    <div class="clock" id="clock">
-      <div class="dot-toggle" onclick="toggleMode()"></div>
+    <div class="clock" id="clock" onclick="toggleMode()">
       <div class="time-box">
         <div class="time-content" id="hour">12</div>
       </div>
@@ -133,7 +114,7 @@
     let prevMinute = '';
 
     function updateTime() {
-      const now = new Date(); // user's local time
+      const now = new Date();
       let h = now.getHours();
       const ampm = h >= 12 ? 'PM' : 'AM';
       h = h % 12 || 12;
@@ -155,7 +136,7 @@
       const el = document.getElementById(id);
       if (newVal !== prevVal) {
         el.classList.remove('flip');
-        void el.offsetWidth; // force reflow
+        void el.offsetWidth; // trigger reflow
         el.textContent = newVal;
         el.classList.add('flip');
       }
