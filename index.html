@@ -51,20 +51,15 @@
       font-size: 5rem;
       font-weight: 800;
       border-radius: 8px;
-      perspective: 1000px;
       position: relative;
-    }
-
-    .time-content {
-      display: inline-block;
       transform-origin: bottom;
     }
 
     .flip {
-      animation: flip 0.5s ease;
+      animation: flipBox 0.5s ease;
     }
 
-    @keyframes flip {
+    @keyframes flipBox {
       0% {
         transform: rotateX(0deg);
       }
@@ -99,23 +94,31 @@
 <body>
   <div class="clock-wrapper">
     <div class="clock" id="clock" onclick="toggleMode()">
-      <div class="time-box">
-        <div class="time-content" id="hour">12</div>
-      </div>
-      <div class="time-box">
-        <div class="time-content" id="minute">00</div>
-      </div>
-      <div class="time-box">
-        <div class="time-content" id="second">00</div>
+      <div class="time-box" id="hour-box">
+        <div id="hour">12</div>
         <div class="ampm" id="ampm">AM</div>
+      </div>
+      <div class="time-box" id="minute-box">
+        <div id="minute">00</div>
+      </div>
+      <div class="time-box" id="second-box">
+        <div id="second">00</div>
       </div>
     </div>
   </div>
+
+  <!-- Ticking sound -->
+  <audio id="tick-sound" preload="auto">
+    <source src="https://actions.google.com/sounds/v1/alarms/analog_watch_tick.ogg" type="audio/ogg" />
+    <source src="https://actions.google.com/sounds/v1/alarms/analog_watch_tick.mp3" type="audio/mpeg" />
+  </audio>
 
   <script>
     let prevHour = '';
     let prevMinute = '';
     let prevSecond = '';
+
+    const tickSound = document.getElementById('tick-sound');
 
     function updateTime() {
       const now = new Date();
@@ -129,9 +132,13 @@
       const minuteStr = String(m).padStart(2, '0');
       const secondStr = String(s).padStart(2, '0');
 
-      updateFlip('hour', hourStr, prevHour);
-      updateFlip('minute', minuteStr, prevMinute);
-      updateFlip('second', secondStr, prevSecond);
+      if (secondStr !== prevSecond) {
+        playTick();
+      }
+
+      updateBox('hour', 'hour-box', hourStr, prevHour);
+      updateBox('minute', 'minute-box', minuteStr, prevMinute);
+      updateBox('second', 'second-box', secondStr, prevSecond);
 
       prevHour = hourStr;
       prevMinute = minuteStr;
@@ -140,14 +147,22 @@
       document.getElementById('ampm').textContent = ampm;
     }
 
-    function updateFlip(id, newVal, prevVal) {
-      const el = document.getElementById(id);
+    function updateBox(textId, boxId, newVal, prevVal) {
+      const textEl = document.getElementById(textId);
+      const boxEl = document.getElementById(boxId);
       if (newVal !== prevVal) {
-        el.classList.remove('flip');
-        void el.offsetWidth; // force reflow
-        el.textContent = newVal;
-        el.classList.add('flip');
+        boxEl.classList.remove('flip');
+        void boxEl.offsetWidth; // force reflow
+        textEl.textContent = newVal;
+        boxEl.classList.add('flip');
       }
+    }
+
+    function playTick() {
+      if (!tickSound.paused) {
+        tickSound.currentTime = 0;
+      }
+      tickSound.play().catch(() => {});
     }
 
     function toggleMode() {
