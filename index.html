@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Minimal Flip Clock</title>
+  <title>Flip Clock Fullscreen</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * {
@@ -52,31 +52,35 @@
       font-weight: 800;
       border-radius: 8px;
       position: relative;
+      transform-style: preserve-3d;
       transform-origin: bottom;
     }
 
     .flip {
-      animation: flipBox 0.5s ease;
+      animation: advancedFlip 0.6s cubic-bezier(0.23, 1, 0.32, 1);
     }
 
-    @keyframes flipBox {
+    @keyframes advancedFlip {
       0% {
         transform: rotateX(0deg);
+        opacity: 1;
       }
-      50% {
+      40% {
         transform: rotateX(-90deg);
+        opacity: 0.7;
       }
       100% {
         transform: rotateX(0deg);
+        opacity: 1;
       }
     }
 
     .ampm {
       position: absolute;
-      bottom: 5px;
-      right: 5px;
+      top: 5px;
+      left: 5px;
       font-size: 1rem;
-      font-weight: 300;
+      font-weight: 400;
       padding: 2px 4px;
     }
 
@@ -95,8 +99,8 @@
   <div class="clock-wrapper">
     <div class="clock" id="clock" onclick="toggleMode()">
       <div class="time-box" id="hour-box">
-        <div id="hour">12</div>
         <div class="ampm" id="ampm">AM</div>
+        <div id="hour">12</div>
       </div>
       <div class="time-box" id="minute-box">
         <div id="minute">00</div>
@@ -132,9 +136,7 @@
       const minuteStr = String(m).padStart(2, '0');
       const secondStr = String(s).padStart(2, '0');
 
-      if (secondStr !== prevSecond) {
-        playTick();
-      }
+      if (secondStr !== prevSecond) playTick();
 
       updateBox('hour', 'hour-box', hourStr, prevHour);
       updateBox('minute', 'minute-box', minuteStr, prevMinute);
@@ -152,16 +154,14 @@
       const boxEl = document.getElementById(boxId);
       if (newVal !== prevVal) {
         boxEl.classList.remove('flip');
-        void boxEl.offsetWidth; // force reflow
+        void boxEl.offsetWidth; // trigger reflow
         textEl.textContent = newVal;
         boxEl.classList.add('flip');
       }
     }
 
     function playTick() {
-      if (!tickSound.paused) {
-        tickSound.currentTime = 0;
-      }
+      if (!tickSound.paused) tickSound.currentTime = 0;
       tickSound.play().catch(() => {});
     }
 
