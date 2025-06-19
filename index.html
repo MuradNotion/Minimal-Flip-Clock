@@ -98,16 +98,6 @@
       padding: 2px 4px;
     }
 
-    .timezone {
-      position: absolute;
-      bottom: 5px;
-      left: 5px;
-      font-size: 0.9rem;
-      font-weight: 300;
-      padding: 2px 4px;
-      opacity: 0.6;
-    }
-
     body.dark .clock {
       background-color: rgba(0, 0, 0, 0.85);
       border-color: #444;
@@ -134,7 +124,6 @@
       <div class="time-box">
         <div class="time-content" id="minute">00</div>
         <div class="ampm" id="ampm">AM</div>
-        <div class="timezone" id="timezone">Loading...</div>
       </div>
     </div>
   </div>
@@ -160,9 +149,6 @@
       prevMinute = minuteStr;
 
       document.getElementById('ampm').textContent = ampm;
-
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      document.getElementById('timezone').textContent = timezone;
     }
 
     function updateFlip(id, newVal, prevVal) {
