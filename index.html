@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Flip Clock Fullscreen</title>
+  <title>Minimal Flip Clock</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * {
@@ -38,7 +38,7 @@
       position: relative;
       transition: background-color 0.3s, border-color 0.3s;
       transform-origin: center center;
-      cursor: pointer; /* Makes entire clock clickable */
+      cursor: pointer;
     }
 
     .time-box {
@@ -104,6 +104,9 @@
       </div>
       <div class="time-box">
         <div class="time-content" id="minute">00</div>
+      </div>
+      <div class="time-box">
+        <div class="time-content" id="second">00</div>
         <div class="ampm" id="ampm">AM</div>
       </div>
     </div>
@@ -112,6 +115,7 @@
   <script>
     let prevHour = '';
     let prevMinute = '';
+    let prevSecond = '';
 
     function updateTime() {
       const now = new Date();
@@ -119,15 +123,19 @@
       const ampm = h >= 12 ? 'PM' : 'AM';
       h = h % 12 || 12;
       const m = now.getMinutes();
+      const s = now.getSeconds();
 
       const hourStr = String(h).padStart(2, '0');
       const minuteStr = String(m).padStart(2, '0');
+      const secondStr = String(s).padStart(2, '0');
 
       updateFlip('hour', hourStr, prevHour);
       updateFlip('minute', minuteStr, prevMinute);
+      updateFlip('second', secondStr, prevSecond);
 
       prevHour = hourStr;
       prevMinute = minuteStr;
+      prevSecond = secondStr;
 
       document.getElementById('ampm').textContent = ampm;
     }
@@ -136,7 +144,7 @@
       const el = document.getElementById(id);
       if (newVal !== prevVal) {
         el.classList.remove('flip');
-        void el.offsetWidth; // trigger reflow
+        void el.offsetWidth; // force reflow
         el.textContent = newVal;
         el.classList.add('flip');
       }
@@ -153,7 +161,7 @@
       const w = wrapper.clientWidth;
       const h = wrapper.clientHeight;
 
-      const baseWidth = (120 * 2) + 10 + 40 + 8;
+      const baseWidth = (120 * 3) + (10 * 2) + 40 + 8;
       const baseHeight = 120 + 40 + 8;
 
       const scale = Math.min(w / baseWidth, h / baseHeight);
